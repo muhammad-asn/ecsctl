@@ -2,14 +2,13 @@ name: Cross-compile ecsctl
 
 on:
   push:
-    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Build ${{ matrix.os }}
+  build-and-test:
+    name: Build and Test ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -49,8 +48,16 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
-      - name: Install build dependencies
-        run: poetry install --with build
+      - name: Run tests
+        run: |
+          poetry run pytest tests/ --cov=ecsctl --cov-report=xml
+
+      - name: Upload coverage reports to Codecov
+        if: matrix.os == 'ubuntu-latest'  # Only upload coverage once
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: true
 
       - name: Build executable
         run: poetry run bash build.sh
@@ -64,7 +71,7 @@ jobs:
           path: ${{ matrix.asset_name }}
 
   publish:
-    needs: build
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     
