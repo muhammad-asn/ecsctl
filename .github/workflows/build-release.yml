@@ -3,6 +3,7 @@ name: Build ecsctl
 on:
   push:
     tags: [ 'v*' ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -79,10 +80,8 @@ jobs:
 
   create-release:
     permissions:
-      contents: write  # Required for creating releases
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
+      contents: write
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
@@ -95,7 +94,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ecsctl-linux/ecsctl-linux
-            ecsctl-macos/ecsctl-macos
+            ecsctl-linux-amd64
+            ecsctl-macos-amd64
+            ecsctl-macos-arm64
+          body: |
+            ## ecsctl ${{ github.ref_name }}
+            
+            ### Installation
+            ```bash
+            # Linux (amd64)
+            curl -L https://github.com/your-org/ecsctl/releases/download/${{ github.ref_name }}/ecsctl-linux-amd64 -o ecsctl
+            
+            # macOS (amd64)
+            curl -L https://github.com/your-org/ecsctl/releases/download/${{ github.ref_name }}/ecsctl-macos-amd64 -o ecsctl
+            
+            # macOS (arm64)
+            curl -L https://github.com/your-org/ecsctl/releases/download/${{ github.ref_name }}/ecsctl-macos-arm64 -o ecsctl
+            
+            chmod +x ecsctl
+            sudo mv ecsctl /usr/local/bin/
+            ```
+            
+            For full documentation, visit our [documentation site](https://github.com/muhammad-asn/ecsctl/blob/main/README.md).
           draft: false
           prerelease: false
