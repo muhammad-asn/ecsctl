@@ -69,7 +69,6 @@ jobs:
         run: poetry run bash build.sh
         env:
           output_name: ${{ matrix.asset_name }}
-          ECSCTL_VERSION: ${{ env.ECSCTL_VERSION }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -95,9 +94,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ecsctl-linux-amd64
-            ecsctl-macos-amd64
-            ecsctl-macos-arm64
+            ecsctl-linux-amd64/ecsctl-linux-amd64
+            ecsctl-macos-amd64/ecsctl-macos-amd64
+            ecsctl-macos-arm64/ecsctl-macos-arm64
           body: |
             ## ecsctl ${{ github.ref_name }}
             
