@@ -46,18 +46,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install
 
       - name: Run tests
         run: |
           poetry run pytest tests/ --cov=ecsctl --cov-report=xml
-
-      - name: Upload coverage reports to Codecov
-        if: matrix.os == 'ubuntu-latest'  # Only upload coverage once
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: true
 
       - name: Build executable
         run: poetry run bash build.sh
