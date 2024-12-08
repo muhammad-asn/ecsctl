@@ -1,4 +1,4 @@
-name: Build and Release ecsctl
+name: Build ecsctl
 
 on:
   push:
@@ -74,8 +74,12 @@ jobs:
           path: ${{ matrix.asset_name }}
 
   create-release:
+    permissions:
+      contents: write  # Required for creating releases
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     needs: build-and-test
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -83,6 +87,8 @@ jobs:
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
             ecsctl-linux/ecsctl-linux
