@@ -16,13 +16,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24.04, macos-13, macos-latest]
         python-version: ['3.11']
+        platform:
+          - amd64
         include:
-          - os: ubuntu-latest
-            asset_name: ecsctl-linux
+          - os: ubuntu-24.04
+            asset_name: ecsctl-linux-amd64
+          - os: macos-13
+            asset_name: ecsctl-macos-amd64
           - os: macos-latest
-            asset_name: ecsctl-macos
+            asset_name: ecsctl-macos-arm64
 
     steps:
       - uses: actions/checkout@v4
