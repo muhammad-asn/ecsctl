@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "ecsctl"
+version = "0.1.0"
+description = "A kubectl-like CLI tool for AWS ECS management"
+authors = ["muhammad-asn <muhammad.a.s.nugroho@gdplabs.id>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "1.35.71"
+botocore = "1.35.71"
+click = "8.1.7"
+jmespath = "1.0.1"
+markdown-it-py = "3.0.0"
+mdurl = "0.1.2"
+pygments = "2.18.0"
+python-dateutil = "2.9.0.post0"
+python-dotenv = "1.0.1"
+rich = "13.9.4"
+s3transfer = "0.10.4"
+six = "1.16.0"
+urllib3 = "2.2.3"
+nuitka = "^2.5.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+black = "^23.7.0"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+pylint = "^2.17.5"
+
+[tool.poetry.scripts]
+ecsctl = "ecsctl.cli:cli"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+multi-line-output = 3
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=ecsctl --cov-report=term-missing"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
