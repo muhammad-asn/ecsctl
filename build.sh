@@ -4,7 +4,6 @@
 case "$(uname -s)" in
     Linux*)     output_name=ecsctl-linux;;
     Darwin*)    output_name=ecsctl-macos;;
-    MINGW*|MSYS*) output_name=ecsctl-windows.exe;;
     *)          output_name=ecsctl;;
 esac
 

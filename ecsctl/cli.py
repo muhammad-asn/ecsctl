@@ -6,8 +6,10 @@ import subprocess
 import sys
 from typing import Optional
 from ecsctl.utils import ignore_user_entered_signals
+from ecsctl import __version__
 
 @click.group()
+@click.version_option(version=__version__, prog_name="ecsctl")
 def cli():
     """ECS command line tool that mimics kubectl."""
     pass
