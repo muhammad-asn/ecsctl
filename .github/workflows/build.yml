@@ -2,6 +2,7 @@ name: Cross-compile ecsctl
 
 on:
   push:
+    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
@@ -13,7 +14,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -73,3 +73,19 @@ jobs:
           name: ${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
 
+  create-release:
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ecsctl-linux/ecsctl-linux
+            ecsctl-macos/ecsctl-macos
+          draft: false
+          prerelease: false
