@@ -25,6 +25,7 @@ echo "Output name: ${final_output_name}"
 
 # Build executable with Nuitka
 python -m nuitka \
+    --include-data-files=pyproject.toml=pyproject.toml \
     --follow-imports \
     --standalone \
     --onefile \
