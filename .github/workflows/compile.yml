@@ -10,7 +10,12 @@ jobs:
   build-and-test:
     name: Build and Test ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.11']
@@ -59,25 +64,8 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
           name: ${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
 
-  publish:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ecsctl-linux/ecsctl-linux
-            ecsctl-windows.exe/ecsctl-windows.exe
-            ecsctl-macos/ecsctl-macos
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
