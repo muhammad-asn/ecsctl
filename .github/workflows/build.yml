@@ -1,4 +1,4 @@
-name: Build and Release ecsctl
+name: Build ecsctl
 
 on:
   push:
@@ -72,20 +72,3 @@ jobs:
         with:
           name: ${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
-
-  create-release:
-    needs: build-and-test
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ecsctl-linux/ecsctl-linux
-            ecsctl-macos/ecsctl-macos
-          draft: false
-          prerelease: false
