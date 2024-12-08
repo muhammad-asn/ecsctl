@@ -1,4 +1,4 @@
-name: Cross-compile ecsctl
+name: Build and Release ecsctl
 
 on:
   push:
@@ -13,17 +13,14 @@ jobs:
     defaults:
       run:
         shell: bash
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ['3.11']
         include:
           - os: ubuntu-latest
             asset_name: ecsctl-linux
-          - os: windows-latest 
-            asset_name: ecsctl-windows.exe
           - os: macos-latest
             asset_name: ecsctl-macos
 
@@ -59,7 +56,9 @@ jobs:
 
       - name: Set version
         if: startsWith(github.ref, 'refs/tags/v')
-        run: echo "ECSCTL_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: |
+          # Update VERSION in __init__.py
+          sed -i.bak "s/VERSION = \".*\"/VERSION = \"${GITHUB_REF#refs/tags/v}\"/" ecsctl/__init__.py
 
       - name: Build executable
         run: poetry run bash build.sh
@@ -74,3 +73,19 @@ jobs:
           name: ${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
 
+  create-release:
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ecsctl-linux/ecsctl-linux
+            ecsctl-macos/ecsctl-macos
+          draft: false
+          prerelease: false
