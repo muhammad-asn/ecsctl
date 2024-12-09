@@ -23,30 +23,41 @@ ECSCTL is a Python-based tool for managing Amazon ECS clusters, offering kubectl
 
 ## Installation
 
-### Via pip (Recommended)
+### From Binary
+Download the latest release for your platform:
+- [Latest Releases](https://github.com/muhammad-asn/ecsctl/releases)
 
 ```bash
-$ pip install ecsctl
+# Linux/MacOS
+chmod +x ecsctl
+sudo mv ecsctl /usr/local/bin/
+
+# Or install to user directory
+mkdir -p ~/.local/bin
+mv ecsctl ~/.local/bin/
 ```
 
 ### From Source
-
 ```bash
-$ git clone https://github.com/username/ecsctl.git
-$ cd ecsctl
-$ pip install -e .
+# Clone the repository
+git clone https://github.com/muhammad-asn/ecsctl.git
+cd ecsctl
+
+# Install in editable mode with all dependencies
+pip install -e .
 ```
 
 ## Quick Start
 
 ```bash
-$ ecsctl --help
+$ ecsctl --help   
 Usage: ecsctl [OPTIONS] COMMAND [ARGS]...
 
   ECS command line tool that mimics kubectl.
 
 Options:
-  --help  Show this message and exit.
+  --version  Show the version and exit.
+  --help     Show this message and exit.
 
 Commands:
   exec          Execute interactive shell on EC2 instance using SSM.
@@ -56,9 +67,27 @@ Commands:
   use-cluster   Select ECS cluster to use.
 ```
 
-## Configuration
+## Configuration   
+1. Set AWS credentials (./aws/config)
+  ```
+  [profile root-profile]
+  region = us-east-1
+  output = json
 
-ECSCTL uses AWS credentials from environment variables or profiles, with optional role assumption via `AWS_ROLE_ARN`.
+  [profile profile-1]
+  role_arn = arn:aws:iam::<account-id>:role/<role-name>
+  region = us-east-1
+  output = json
+  source_profile = root-profile
+  ```     
+
+2. Export environment variables
+  ```
+  export AWS_ACCESS_KEY_ID=
+  export AWS_SECRET_ACCESS_KEY=
+  export AWS_REGION=ap-southeast-1
+  export AWS_PROFILE= <profile-name>
+  ```
 
 ## Contributing
 
@@ -68,7 +97,7 @@ We welcome contributions! Here's how you can help:
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/your-username/ecsctl.git
+   git clone https://github.com/muhammad-asn/ecsctl.git
    cd ecsctl
    ```
 3. Create a virtual environment:
